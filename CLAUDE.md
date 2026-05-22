@@ -1,4 +1,4 @@
-# CLAUDE.md — Factory OS
+# CLAUDE.md — NOVA
 
 This is the master ruleset for every agent working in this codebase.
 Read this entire file before touching anything.
@@ -7,26 +7,28 @@ Read this entire file before touching anything.
 
 ## Who you are
 
-You are an agent working inside an AI-native software factory owned by RIQ.
-This factory builds and operates Option 5 businesses — agent-run companies
-that generate revenue with near-zero marginal cost.
+You are an agent working inside NOVA — an AI-native agentic company
+owned and operated by RIQ. NOVA is a one-person software factory that
+ships agents, business functions, and services to customers at scale.
 
-Your job is to execute specs with precision, follow the rules below without
-exception, and never require RIQ to review implementation details.
-RIQ reviews outcomes, not code.
+Your job is to execute specs with precision, follow the rules below
+without exception, and never require RIQ to review implementation
+details. RIQ reviews outcomes, not code.
 
 ---
 
-## The factory's north star
+## NOVA's north star
 
 One person. One factory. A portfolio of agent-operated businesses.
-Spec to production — zero human touches in between.
+Ship agents, business functions, and services to customers —
+all from one factory. Spec to production with zero human touches
+in between.
 
 ---
 
 ## Stack decisions — locked, do not deviate
 
-- **Backend:** FastAPI (Python) or Node.js/Express depending on the business
+- **Backend:** FastAPI (Python) or Node.js/Express depending on business
 - **Frontend:** React + TypeScript
 - **Database:** PostgreSQL
 - **ORM:** Prisma (TypeScript) or SQLAlchemy (Python)
@@ -40,6 +42,8 @@ Spec to production — zero human touches in between.
 - **Orchestration:** CrewAI
 - **Async agent:** Claude Code
 - **Sync agent:** Cursor
+- **Ticketing:** Linear
+- **Code review:** Cursor Bugbot
 
 Do not suggest alternative tools unless RIQ explicitly asks.
 Do not introduce new dependencies without documenting why in your PR.
@@ -62,8 +66,8 @@ Do not introduce new dependencies without documenting why in your PR.
    CI must pass before anything merges.
 
 5. **One concern per function.** Functions do one thing.
-   If a function needs a comment to explain what it does, it needs to be
-   split into smaller functions.
+   If a function needs a comment to explain what it does, it needs
+   to be split into smaller functions.
 
 6. **Explicit over implicit.** No magic. No clever shortcuts.
    Code should be readable by the next agent without explanation.
@@ -86,6 +90,7 @@ When taking on tasks, load the appropriate role skill:
 - **Generating docs** → /docs role
 - **Reviewing a release** → /release role
 - **Researching a market** → /research role
+- **Design work** → /design role
 
 ---
 
@@ -105,7 +110,7 @@ When taking on tasks, load the appropriate role skill:
 tests/
   unit/          # Pure function tests, no external dependencies
   integration/   # Tests with real database, mocked external APIs
-  acceptance/    # End-to-end tests from the spec's acceptance criteria
+  acceptance/    # End-to-end tests from the spec acceptance criteria
 
 Coverage floor: 80% lines. PRs that drop below this are blocked.
 
@@ -125,6 +130,7 @@ Bad: "test user endpoint"
 - [ ] PR description includes Linear ticket reference
 - [ ] No new dependencies without justification
 - [ ] Security officer scan completed
+- [ ] Bugbot review passed
 
 ---
 
@@ -136,7 +142,8 @@ Bad: "test user endpoint"
 - Decisions that affect billing or pricing
 - Any action that cannot be reversed
 
-When in doubt about scope — stop and ask. Do not guess on high-stakes decisions.
+When in doubt about scope — stop and ask.
+Do not guess on high-stakes decisions.
 
 ---
 
@@ -146,4 +153,4 @@ After every significant task, update the relevant brain page in GBrain.
 Every decision made, every pattern discovered, every bug fixed
 should create a memory that the next agent session inherits.
 
-The factory gets smarter with every run.
+NOVA gets smarter with every run.
