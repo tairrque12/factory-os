@@ -26,24 +26,122 @@ in between.
 
 ---
 
+## GStack skills — load before every task
+
+GStack is installed at: ~/.claude/skills/gstack
+
+Load the appropriate skill for every task type:
+
+- Writing or scoping a spec → /gstack autoplan
+- Building a feature → /gstack ship
+- Code review → /gstack review
+- Security check → /gstack cso
+- Writing documentation → /gstack document-generate
+- Design work → /gstack design-consultation
+- Design review → /gstack design-review
+- Research task → /gstack investigate
+- Health check → /gstack health
+- Retrospective → /gstack retro
+- High-risk operation → /gstack careful
+- Saving session context → /gstack context-save
+- Restoring session context → /gstack context-restore
+- Major decision → /gstack office-hours
+- Deploying → /gstack land-and-deploy
+- Canary deploy → /gstack canary
+
+Never start a task without loading the relevant skill first.
+
+---
+
+## GBrain — query before every task
+
+GBrain is your company memory. Before starting any task:
+1. Query GBrain for relevant context
+2. Check for related decisions, patterns, or previous work
+3. After completing the task, write a brain page with what you learned
+
+Brain repo lives at: ~/brain
+Query via MCP tool: gbrain search / gbrain query
+
+---
+
+## Departments and Linear routing
+
+NOVA has 5 departments. Every ticket belongs to one team.
+Route work to the correct team based on the task type.
+
+ENG — Engineering
+- Builds and ships product features
+- Ticket states: Backlog → Spec → Scoping → Building → PR Open → Review → Staging → Done
+- Agent: Claude Code async for S/M, Cursor sync for L/XL
+- Slack: #engineering
+
+RES — Research  
+- Finds and validates business opportunities
+- Ticket states: Backlog → Brief → Scanning → Filtering → Validating → Delivered
+- Agent: Research skill + GBrain perplexity-research
+- Slack: #research
+- Output: brain pages under ~/brain/research/
+
+PRD — Product
+- Translates research into buildable specs
+- Ticket states: Backlog → Idea → Discovery → Spec → Design → Ready for Eng → Done
+- Agent: Cursor sync — product agent
+- Slack: #product
+- Output: ENG ticket when spec is complete
+
+MKT — Marketing
+- Creates content and drives awareness
+- Ticket states: Backlog → Brief → Drafting → Review → Scheduled → Live → Measured
+- Agent: Marketing agent — always moves to Review before publishing
+- Slack: #marketing
+- Rule: Never publish without RIQ approval
+
+SAL — Sales
+- Identifies and qualifies prospects
+- Ticket states: Backlog → Identified → Outreach → Engaged → Meeting → Proposal → Closed Won / Closed Lost
+- Agent: Sales agent — always moves to Review before customer contact
+- Slack: #sales
+- Rule: Never contact prospects without RIQ approval
+
+OPS — Operations
+- Detects and resolves production incidents
+- Ticket states: Backlog → Flagged → Investigating → Resolving → Monitoring → Resolved
+- Agent: Ops agent — fed by Sentry and PostHog automatically
+- Slack: #operations
+- Rule: Every incident gets a postmortem brain page
+
+---
+
+## Complexity routing — how to pick the right agent tier
+
+XS — Async agent, no checkpoint needed. Simple bug fix, copy change, config update.
+S — Async agent, no checkpoint needed. Single function, single endpoint.
+M — Async agent with one checkpoint before PR. Multi-file change.
+L — Cursor sync session with RIQ. Architecture change, new system.
+XL — Cursor sync session with RIQ. Major feature, cross-system change.
+
+---
+
 ## Stack decisions — locked, do not deviate
 
-- **Backend:** FastAPI (Python) or Node.js/Express depending on business
-- **Frontend:** React + TypeScript
-- **Database:** PostgreSQL
-- **ORM:** Prisma (TypeScript) or SQLAlchemy (Python)
-- **Hosting:** Railway (staging + production)
-- **CI/CD:** GitHub Actions (never suggest alternatives)
-- **Error monitoring:** Sentry
-- **Analytics:** PostHog
-- **Payments:** Stripe
-- **Team communication:** Slack
-- **Memory layer:** GBrain
-- **Orchestration:** CrewAI
-- **Async agent:** Claude Code
-- **Sync agent:** Cursor
-- **Ticketing:** Linear
-- **Code review:** Cursor Bugbot
+- Backend: FastAPI (Python) or Node.js/Express per business
+- Frontend: React + TypeScript
+- Database: PostgreSQL
+- ORM: Prisma (TypeScript) or SQLAlchemy (Python)
+- Hosting: Railway (staging + production)
+- CI/CD: GitHub Actions
+- Error monitoring: Sentry
+- Analytics: PostHog
+- Payments: Stripe
+- Team communication: Slack
+- Memory layer: GBrain
+- Orchestration: CrewAI
+- Async agent: Claude Code
+- Sync agent: Cursor
+- Ticketing: Linear
+- Code review: Cursor Bugbot
+- Agent skills: GStack
 
 Do not suggest alternative tools unless RIQ explicitly asks.
 Do not introduce new dependencies without documenting why in your PR.
@@ -52,45 +150,26 @@ Do not introduce new dependencies without documenting why in your PR.
 
 ## Architecture rules — never break these
 
-1. **No credentials in code ever.** All secrets via environment variables.
-   Reference as process.env.KEY_NAME or os.environ["KEY_NAME"].
+1. No credentials in code ever. All secrets via environment variables.
    If you see a hardcoded credential, stop and flag it immediately.
 
-2. **Tests before implementation.** Write the test first.
-   Implementation exists to make tests pass — not the other way around.
+2. Tests before implementation. Write the test first.
+   Implementation exists to make tests pass.
 
-3. **Every PR must have a description.** Include: what changed, why,
+3. Every PR must have a description. Include: what changed, why,
    which Linear ticket it closes, and what tests cover it.
 
-4. **No direct pushes to main.** Everything goes through a PR.
+4. No direct pushes to main. Everything goes through a PR.
    CI must pass before anything merges.
 
-5. **One concern per function.** Functions do one thing.
-   If a function needs a comment to explain what it does, it needs
-   to be split into smaller functions.
+5. One concern per function. Functions do one thing.
 
-6. **Explicit over implicit.** No magic. No clever shortcuts.
-   Code should be readable by the next agent without explanation.
+6. Explicit over implicit. No magic. No clever shortcuts.
 
-7. **Error handling is not optional.** Every external API call,
+7. Error handling is not optional. Every external API call,
    every database query, every file operation has error handling.
-   Silent failures are not acceptable.
 
-8. **No console.log in production code.** Use structured logging only.
-
----
-
-## GStack agent roles
-
-When taking on tasks, load the appropriate role skill:
-
-- **Scoping a spec** → /engineer role
-- **Writing tests** → /qa role
-- **Pre-PR security check** → /security role
-- **Generating docs** → /docs role
-- **Reviewing a release** → /release role
-- **Researching a market** → /research role
-- **Design work** → /design role
+8. No console.log in production code. Use structured logging only.
 
 ---
 
@@ -108,9 +187,9 @@ When taking on tasks, load the appropriate role skill:
 ## Test structure
 
 tests/
-  unit/          # Pure function tests, no external dependencies
-  integration/   # Tests with real database, mocked external APIs
-  acceptance/    # End-to-end tests from the spec acceptance criteria
+  unit/        — Pure function tests, no external dependencies
+  integration/ — Tests with real database, mocked external APIs
+  acceptance/  — End-to-end tests from spec acceptance criteria
 
 Coverage floor: 80% lines. PRs that drop below this are blocked.
 
@@ -122,6 +201,8 @@ Bad: "test user endpoint"
 
 ## PR checklist — every PR must satisfy this before merge
 
+- [ ] GStack skill loaded before starting
+- [ ] GBrain queried for relevant context
 - [ ] Tests written before implementation
 - [ ] All CI gates passing
 - [ ] Coverage above 80%
@@ -129,8 +210,8 @@ Bad: "test user endpoint"
 - [ ] Error handling on all external calls
 - [ ] PR description includes Linear ticket reference
 - [ ] No new dependencies without justification
-- [ ] Security officer scan completed
 - [ ] Bugbot review passed
+- [ ] GBrain updated with what was learned
 
 ---
 
@@ -141,16 +222,21 @@ Bad: "test user endpoint"
 - Customer relationship touchpoints
 - Decisions that affect billing or pricing
 - Any action that cannot be reversed
+- Publishing marketing content
+- Contacting prospects or customers
 
-When in doubt about scope — stop and ask.
-Do not guess on high-stakes decisions.
+When in doubt — stop and ask. Do not guess on high-stakes decisions.
 
 ---
 
 ## Self-improving loop
 
-After every significant task, update the relevant brain page in GBrain.
-Every decision made, every pattern discovered, every bug fixed
-should create a memory that the next agent session inherits.
+After every significant task:
+1. Write a GBrain brain page with what you learned
+2. Update the relevant decision page if architecture changed
+3. Add a timeline entry to the relevant business or feature page
 
-NOVA gets smarter with every run.
+NOVA gets smarter with every run. Every model improvement
+Anthropic ships makes the factory better automatically.
+The factory compounds with time, usage, and every AI breakthrough.
+EOF
